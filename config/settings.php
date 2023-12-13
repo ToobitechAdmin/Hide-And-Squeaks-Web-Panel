@@ -18,7 +18,7 @@ return [
     # Theme Mode
     # Value: light | dark | system
 
-    'KT_THEME_MODE_DEFAULT' => 'light',
+    'KT_THEME_MODE_DEFAULT' => 'dark',
     'KT_THEME_MODE_SWITCH_ENABLED' => true,
 
 

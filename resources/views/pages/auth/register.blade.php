@@ -134,7 +134,7 @@
         <div class="text-gray-500 text-center fw-semibold fs-6">
             Already have an Account?
 
-            <a href="/login" class="link-primary fw-semibold">
+            <a href="{{ route('login') }}" class="link-primary fw-semibold">
                 Sign in
             </a>
         </div>
