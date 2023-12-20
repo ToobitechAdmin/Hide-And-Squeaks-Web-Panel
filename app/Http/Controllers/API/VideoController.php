@@ -51,9 +51,9 @@ class VideoController extends Controller
         // check if the upload has finished (in chunk mode it will send smaller files)
         if ($save->isFinished()) {
             // save the file to storage and database
-            $response = $this->saveFile($save->getFile(), $request->input('title'));
+            $res = $this->saveFile($save->getFile(), $request->input('title'));
 
-            return $response;
+            return $res;
         }
 
         // we are in chunk mode, let's send the current progress
