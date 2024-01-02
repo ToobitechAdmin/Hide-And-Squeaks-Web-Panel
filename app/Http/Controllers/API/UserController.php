@@ -50,7 +50,7 @@ class UserController extends BaseController
             $user = User::create($input);
             $success['token'] =  $user->createToken('Hide-and-squeaks')->accessToken;
             $success['name'] =  Str::upper($user->name);
-
+            $success['id'] = $user->id;
             return $this->sendResponse($success, 'User register successfully.');
             # code...
         } catch (\Throwable $e) {
@@ -66,6 +66,7 @@ class UserController extends BaseController
                 $success['token'] =  $user->createToken('Hide-and-squeaks')->accessToken;
 
                 $success['name'] =  Str::upper($user->name) ;
+                $success['id'] =  $user->id ;
 
 
                 return $this->sendResponse($success, 'User login successfully.');

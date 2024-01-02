@@ -71,4 +71,8 @@ Breadcrumbs::for('products.index', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');
     $trail->push('Product Management', route('products.index'));
 });
+Breadcrumbs::for('ensurance.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Ensurance Management', route('ensurance.index'));
+});
 
