@@ -33,7 +33,7 @@ class UserController extends BaseController
             return $this->sendError($validator->errors()->first());
 
         }
-        try {
+
             if($request->hasFile('profile'))
             {
                 $img = Str::random(20).$request->file('profile')->getClientOriginalName();
@@ -48,18 +48,26 @@ class UserController extends BaseController
             $input['name'] =   $name .' '.$last_name;
             $input['password'] = Hash::make($request->password);
             $user = User::create($input);
-            $success['token'] =  $user->createToken('Hide-and-squeaks')->accessToken;
+            // $success['token'] =  $user->createToken('Hide-and-squeaks')->accessToken;
             $success['name'] =  Str::upper($user->name);
             $success['id'] = $user->id;
             return $this->sendResponse($success, 'User register successfully.');
             # code...
-        } catch (\Throwable $e) {
-            return $this->sendError('SomeThing went wrong.');
-        }
+
 
     }
     public function login(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if($validator->fails()){
+            return $this->sendError($validator->errors()->first());
+
+        }
         try {
             if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
                 $user = Auth::user();
@@ -71,9 +79,9 @@ class UserController extends BaseController
 
                 return $this->sendResponse($success, 'User login successfully.');
             }
-            else{
-                return $this->sendError('Unauthorized.');
-            }
+
+            return $this->sendError('Invalid Email Password.');
+
             //code...
         } catch (\Throwable $th) {
             return $this->sendError('SomeThing went wrong.');
@@ -81,30 +89,47 @@ class UserController extends BaseController
     }
     public function requestOtp(Request $request)
     {
-        $otp = rand(1000, 9999);
-        $resetToken = Str::random(64); // Generate a random token for password reset
+        $validator = Validator::make($request->all(), [
 
-        Log::info("otp = " . $otp);
+            'email' => 'required|email',
+
+        ]);
+
+        if($validator->fails()){
+            return $this->sendError($validator->errors()->first());
+
+        }
+        $otp = rand(1000, 9999);
 
         $user = User::where('email', $request->email)->update([
             'otp' => $otp,
-            'reset_token' => $resetToken,
+
         ]);
 
         if ($user) {
             Mail::to($request->email)->send(new ResetPasswordEmail($otp));
 
             $success['otp'] =  $otp;
-            $success['reset_token'] = $resetToken;
 
             return $this->sendResponse($success, 'OTP Sent Successfully');
-        } else {
-            return $this->sendError('Otp not sent.');
         }
+            return $this->sendError('Invalid Email');
+
     }
 
     public function verifyOtp(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+
+            'email' => 'required|email',
+            'otp' => 'required|numeric|max:4',
+
+        ]);
+
+        if($validator->fails()){
+            return $this->sendError($validator->errors()->first());
+
+        }
         $otp_match = User::where([
             'email' => $request->email,
             'otp' => $request->otp,
@@ -118,16 +143,24 @@ class UserController extends BaseController
     }
     public function resetPassword(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+
+            'email' => 'required|email',
+            'password' => 'required',
+
+        ]);
+        if($validator->fails()){
+            return $this->sendError($validator->errors()->first());
+
+        }
         $user = User::where([
             'email' => $request->email,
-            'reset_token' => $request->reset_token,
         ])->first();
 
-        if ($user && $user->otp == $request->otp) {
+        if ($user) {
             // Reset the password
-            $user->password = bcrypt($request->new_password);
+            $user->password = Hash::make($request->password);
             $user->otp = null; // Clear the OTP
-            $user->reset_token = null; // Clear the reset token
             $user->save();
 
             return $this->sendResponse('Password reset successfully');
