@@ -43,26 +43,29 @@ public function profilePost(Request $request)
     try {
     //code...
     $validator = Validator::make($request->all(), [
-        'name' => 'required|string',
-        'breed' => 'required|string',
-        'age' => 'required',
+        'pet_name' => 'required|string',
+        'pet_breed' => 'required|string',
+
+        // 'age' => 'required',
     ]);
 
     if($validator->fails()){
         return $this->sendError($validator->errors()->first());
 
     }
+
     $user_id = auth()->user()->id;
+    if($request->hasFile('profile'))
+    {
+        $img = Str::random(20).$request->file('profile')->getClientOriginalName();
+        $input['profile'] = 'documents/profile/'.$img;
+        $request->profile->move(public_path("documents/profile"), $img);
+    }
 
-   // $user = auth()->user();
-
-    $pet =Pet::create([
-        'name' => $request->input('name'),
-        'breed' => $request->input('breed'),
-        'status' => $request->input('status'),
-        'age' =>$request->input('age'),
-        'user_id' =>  $user_id,
-    ]);
+    $input['pet_name'] = $request->pet_name;
+    $input['pet_breed'] = $request->pet_breed;
+    $input['pet_age'] = $request->pet_age;
+    $pet =User::find($user_id)->update($input) ;
 
     $response = [
 
@@ -84,13 +87,10 @@ public function profilePost(Request $request)
 
 public function getProfile()
 {
-    // $user = auth()->user();
-
-
-
+    $user_id = auth()->user()->id;
     try {
-        //code...
-        $profile = Pet::all();
+
+        $profile = User::find($user_id);
         return $this->sendResponse($profile);
     } catch (\Throwable $th) {
         return $this->sendError('Something went wrong');
