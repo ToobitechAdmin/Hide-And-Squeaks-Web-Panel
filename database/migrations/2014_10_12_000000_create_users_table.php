@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('profile')->nullable()->default('default.png');
             $table->string('device_token')->nullable();
             $table->string('email')->unique();
+            $table->integer('otp')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
