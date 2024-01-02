@@ -34,25 +34,18 @@ class UserController extends BaseController
 
         }
 
-            if($request->hasFile('profile'))
-            {
-                $img = Str::random(20).$request->file('profile')->getClientOriginalName();
-                $input['profile'] = $img;
-                $request->profile->move(public_path("documents/profile"), $img);
-            }else{
-                $input['profile'] = 'documents/profile/default.png';
-            }
-            $input = $request->except(['password','name','last_name'],$request->all());
-            $name = $request->name;
-            $last_name = $request->last_name;
-            $input['name'] =   $name .' '.$last_name;
-            $input['password'] = Hash::make($request->password);
-            $user = User::create($input);
-            // $success['token'] =  $user->createToken('Hide-and-squeaks')->accessToken;
-            $success['name'] =  Str::upper($user->name);
-            $success['id'] = $user->id;
-            return $this->sendResponse($success, 'User register successfully.');
-            # code...
+
+        $input = $request->except(['password','name','last_name'],$request->all());
+        $name = $request->name;
+        $last_name = $request->last_name;
+        $input['name'] =   $name .' '.$last_name;
+        $input['password'] = Hash::make($request->password);
+        $user = User::create($input);
+        // $success['token'] =  $user->createToken('Hide-and-squeaks')->accessToken;
+        $success['name'] =  Str::upper($user->name);
+        $success['id'] = $user->id;
+        return $this->sendResponse($success, 'User register successfully.');
+
 
 
     }
