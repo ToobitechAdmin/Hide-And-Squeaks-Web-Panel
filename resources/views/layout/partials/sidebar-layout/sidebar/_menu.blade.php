@@ -103,38 +103,34 @@
 
             {{-- Haseeb --}}
             {{-- Product --}}
-            <div class="menu-item">
+            {{-- <div class="menu-item">
                 <!--begin:Menu link-->
-                <a class="menu-link" href="{{ route('products.index') }}"
-                    >
+                <a class="menu-link" href="{{ route('products.index') }}">
                     <span class="menu-icon">{!! getIcon('abstract-28', 'fs-2') !!}</span>
                     <span class="menu-title">Product Management</span>
                 </a>
                 <!--end:Menu link-->
-            </div>
+            </div> --}}
 
- <div class="menu-item">
+            <div class="menu-item">
                 <!--begin:Menu link-->
-                <a class="menu-link" href="{{ route('audios.index') }}"
-                    >
+                <a class="menu-link" href="{{ route('audios.index') }}">
                     <span class="menu-icon">{!! getIcon('abstract-28', 'fs-2') !!}</span>
                     <span class="menu-title">Audio Management</span>
                 </a>
                 <!--end:Menu link-->
             </div>
-             <div class="menu-item">
+            {{-- <div class="menu-item">
                 <!--begin:Menu link-->
-                <a class="menu-link" href="{{ route('videos.index') }}"
-                    >
+                <a class="menu-link" href="{{ route('videos.index') }}">
                     <span class="menu-icon">{!! getIcon('abstract-28', 'fs-2') !!}</span>
                     <span class="menu-title">Video Management</span>
                 </a>
                 <!--end:Menu link-->
-            </div>
+            </div> --}}
             <div class="menu-item">
                 <!--begin:Menu link-->
-                <a class="menu-link" href="{{ route('ensurance.index') }}"
-                    >
+                <a class="menu-link" href="{{ route('ensurance.index') }}">
                     <span class="menu-icon">{!! getIcon('abstract-28', 'fs-2') !!}</span>
                     <span class="menu-title">Ensurance Policy Management</span>
                 </a>
