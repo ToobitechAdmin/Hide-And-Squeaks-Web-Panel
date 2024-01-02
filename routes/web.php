@@ -11,6 +11,7 @@ use App\Http\Controllers\AudioController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\ProductManagementController;
 use App\Http\Controllers\UploadController;
+use App\Http\Controllers\EnsuranceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,6 +53,7 @@ Route::put('videos/{video}', [VideoController::class, 'update'])->name('videos.u
 
 //product management route
 Route::resource('/product-management/products', ProductManagementController::class);
+Route::resource('ensurance', EnsuranceController::class);
 
 
 

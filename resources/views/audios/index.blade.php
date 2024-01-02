@@ -7,7 +7,7 @@
     {{ Breadcrumbs::render('audios.index') }}
 @endsection
 <div id="kt_app_content" class="app-content  flex-column-fluid " >
-    
+
 <div class="card">
     <!--begin::Card header-->
     <div class="card-header border-0 pt-6">
@@ -22,7 +22,7 @@
     </div>
     <!--end::Search-->
         </div>
-   
+
 
     <!--begin::Separator-->
     <div class="separator border-gray-200"></div>
@@ -30,7 +30,7 @@
 
     <!--begin::Content-->
     <div class="px-7 py-5" data-kt-user-table-filter="form">
-   
+
     <!--begin::Add user-->
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_user">
         <i class="ki-duotone ki-plus fs-2"></i>        Add Audio
@@ -74,9 +74,9 @@
             <div class="modal-body scroll-y mx-5 mx-xl-15 my-7">
                 <!--begin::Form-->
                 <form id="kt_modal_export_users_form" class="form" action="{{ route('audios.store') }}" method="POST" enctype="multipart/form-data">
-                 
+
                     <div class="text-center">
-                      
+
 
                         <button type="submit" class="btn btn-primary" data-kt-users-modal-action="submit">
                             <span class="indicator-label">
@@ -125,14 +125,14 @@
                             @csrf
 
                     <!--begin::Scroll-->
-                    <div 
-                        class="d-flex flex-column scroll-y px-5 px-lg-10" 
-                        id="kt_modal_add_user_scroll" 
-                        data-kt-scroll="true" 
-                        data-kt-scroll-activate="true" 
-                        data-kt-scroll-max-height="auto" 
-                        data-kt-scroll-dependencies="#kt_modal_add_user_header" 
-                        data-kt-scroll-wrappers="#kt_modal_add_user_scroll" 
+                    <div
+                        class="d-flex flex-column scroll-y px-5 px-lg-10"
+                        id="kt_modal_add_user_scroll"
+                        data-kt-scroll="true"
+                        data-kt-scroll-activate="true"
+                        data-kt-scroll-max-height="auto"
+                        data-kt-scroll-dependencies="#kt_modal_add_user_header"
+                        data-kt-scroll-wrappers="#kt_modal_add_user_scroll"
                         data-kt-scroll-offset="300px"
                     >
                         <!--begin::Input group-->
@@ -157,7 +157,15 @@
                             <input type="text" name="title" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Enter Title" />
                             <!--end::Input-->
                         </div>
-                                                                                        <!--end::Roles-->
+                        <div class="fv-row mb-7">
+                            <!--begin::Label-->
+                            <label class="required fw-semibold fs-6 mb-2" name="type">Type</label>
+                            <!--end::Label-->
+
+                            <!--begin::Input-->
+                            <input type="text" name="type" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Enter Type" />
+                            <!--end::Input-->
+                        </div>                                                          <!--end::Roles-->
                         </div>
                         <!--end::Input group-->
                     </div>
@@ -165,7 +173,7 @@
 
                     <!--begin::Actions-->
                     <div class="text-center pt-10 mb-5">
-                        
+
 
                         <button type="submit" class="btn btn-primary" data-kt-users-modal-action="submit">
                             <span class="indicator-label">
@@ -186,9 +194,9 @@
     </div>
     <!--end::Modal dialog-->
 </div>
-<!--end::Modal - Add task-->  
+<!--end::Modal - Add task-->
 <div class="card-body py-4 mx-20">
-        
+
 <!--begin::Table-->
  <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_users">
             <thead>
@@ -200,6 +208,7 @@
                   </th>
                   <th>Title</th>
                 <th>Audio</th>
+                <th>Type</th>
                 {{-- <th>Download</th> --}}
                 <th>Delete</th>
                 <th>Edit</th>
@@ -207,11 +216,11 @@
             </thead>
     <tbody class="text-gray-600 fw-semibold">
                     <tr>
-              
+
                   <div class="card-body py-4">
-        
-        
-          
+
+
+
                    @foreach($audios as $audio)
                 <tr>
                   <td>
@@ -226,6 +235,7 @@
                             Your browser does not support the audio tag.
                         </audio>
                     </td>
+                    <td>{{ $audio->type }}</td>
                     {{-- <td><a href="{{ asset('storage/' . $audio->file_path) }}" download>Download</a></td> --}}
                     <td class="actions">
                         <form action="{{ route('audios.destroy', $audio->id) }}" method="post" style="display:inline">
@@ -237,14 +247,14 @@
                     <td class="actions">
                         <form action="{{ route('audios.edit', $audio->id) }}" method="get" style="display:inline">
                             @csrf
-                            
+
 <button type="submit" style="background-color: #a932ff; color: #ffffff; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;" onmouseover="this.style.backgroundColor='#7d3aaf'" onmouseout="this.style.backgroundColor='#a932ff'">Edit</button>
                         </form>
                     </td>
                 </tr>
             @endforeach
-        
-     
+
+
       </div>
             </tbody>
 </table>
@@ -262,7 +272,7 @@
 </div>
 <!--end::Menu 1-->
 
-    
+
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
     $(document).ready(function () {
@@ -287,5 +297,5 @@
         });
     });
 </script>
- 
+
     </x-default-layout>
