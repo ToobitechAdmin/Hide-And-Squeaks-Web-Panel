@@ -13,9 +13,9 @@ use Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Mail;
 use App\Mail\sendEmail;
 use App\Mail\ResetPasswordEmail;
+use Mail;
 
 use Log;
 class UserController extends BaseController
@@ -50,7 +50,7 @@ class UserController extends BaseController
             $user = User::create($input);
             // $success['token'] =  $user->createToken('Hide-and-squeaks')->accessToken;
             $success['name'] =  Str::upper($user->name);
-            $success['id'] = $user->id;
+
             return $this->sendResponse($success, 'User register successfully.');
             # code...
 
@@ -74,7 +74,6 @@ class UserController extends BaseController
                 $success['token'] =  $user->createToken('Hide-and-squeaks')->accessToken;
 
                 $success['name'] =  Str::upper($user->name) ;
-                $success['id'] =  $user->id ;
 
 
                 return $this->sendResponse($success, 'User login successfully.');
@@ -99,16 +98,21 @@ class UserController extends BaseController
             return $this->sendError($validator->errors()->first());
 
         }
-        $otp = rand(1000, 9999);
+         $otp = rand(1000, 9999);
 
         $user = User::where('email', $request->email)->update([
             'otp' => $otp,
 
         ]);
-
+        $details['otp'] = $otp;
         if ($user) {
+            $email = $request->email;
             Mail::to($request->email)->send(new ResetPasswordEmail($otp));
-
+            // Mail::send('emails.reset-password-email', $details, function($message) use ($email) {
+            //       $message->to($email, 'Verification Code From Hide And Squeaks')->subject
+            //           ('You have recieved Verification Code');
+            //       $message->from('info@digimaestros.com ','Verification Code');
+            //     });
             $success['otp'] =  $otp;
 
             return $this->sendResponse($success, 'OTP Sent Successfully');
@@ -122,7 +126,7 @@ class UserController extends BaseController
         $validator = Validator::make($request->all(), [
 
             'email' => 'required|email',
-            'otp' => 'required|numeric|max:4',
+            'otp' => 'required|numeric',
 
         ]);
 
