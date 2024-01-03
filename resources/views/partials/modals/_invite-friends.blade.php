@@ -19,7 +19,7 @@
 					<h1 class="mb-3">Invite a Friend</h1>
 					<!--end::Title-->
 					<!--begin::Description-->
-					<div class="text-muted fw-semibold fs-5">If you need more info, please check out 
+					<div class="text-muted fw-semibold fs-5">If you need more info, please check out
 					<a href="#" class="link-primary fw-bold">FAQ Page</a>.</div>
 					<!--end::Description-->
 				</div>

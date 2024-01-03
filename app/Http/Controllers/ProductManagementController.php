@@ -11,17 +11,17 @@ class ProductManagementController extends Controller
     public function index()
     {
         $product = Product::all();
-        return view('product.index', compact('product'));
+        return view('pages.apps.products.index', compact('product'));
     }
 
     public function create()
     {
-        return view('product.index');
+        return view('pages.apps.products.index');
     }
 
     public function store(Request $request)
     {
-     
+
         $request->validate([
             'name' => 'required',
             'image' => 'required|image|mimes:jpeg,jpg,png,gif,svg|max:1048', // Add more allowed audio file types if needed
@@ -54,14 +54,14 @@ class ProductManagementController extends Controller
 public function edit($id)
 {
     $product = Product::findOrFail($id);
-    return view('product.edit', compact('product'));
+    return view('pages.apps.products.edit', compact('product'));
 }
 public function update(Request $request, $id)
 {
   //  return $request->all();
     // $request->validate([
     //     'name' => 'required',
-    //     'image' => 'required|image|mimes:jpeg,jpg,png,gif,svg|max:1048', 
+    //     'image' => 'required|image|mimes:jpeg,jpg,png,gif,svg|max:1048',
     //     'price' => 'required',
     // ]);
 

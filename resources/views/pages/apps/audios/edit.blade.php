@@ -35,7 +35,8 @@
                 <!--begin::Content-->
                 <div class="card-body py-4 mx-20">
                     <!--begin::Form-->
-                    <form action="{{ route('audios.update', $audio->id) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('audios.update', $audio->id) }}" method="POST"
+                        enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
@@ -46,7 +47,8 @@
                             <!--end::Label-->
 
                             <!--begin::Input-->
-                            <input type="file" name="audio_file" class="form-control form-control-solid mb-3 mb-lg-0" />
+                            <input type="file" name="audio_file"
+                                class="form-control form-control-solid mb-3 mb-lg-0" />
                             <!--end::Input-->
                         </div>
                         <!--end::Input group-->
@@ -58,7 +60,8 @@
                             <!--end::Label-->
 
                             <!--begin::Input-->
-                            <input type="text" name="title" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Enter Title" value="{{ $audio->title }}" />
+                            <input type="text" name="title" class="form-control form-control-solid mb-3 mb-lg-0"
+                                placeholder="Enter Title" value="{{ $audio->title }}" />
                             <!--end::Input-->
                         </div>
                         <!--end::Input group-->
@@ -66,9 +69,14 @@
                             <!--begin::Label-->
                             <label class="required fw-semibold fs-6 mb-2" name="type">Type</label>
                             <!--end::Label-->
-
+                            <select class="form-select form-select-solid form-select-sm" name="type"
+                                data-control="select2" data-hide-search="true">
+                                <option value="free" @if ($audio->type == 'free') selected @endif selected>Free
+                                </option>
+                                <option value="paid" @if ($audio->type == 'paid') selected @endif>Paid</option>
+                            </select>
                             <!--begin::Input-->
-                            <input type="text" name="type" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Enter Type" value="{{ $audio->type }}" />
+                            {{-- <input type="text" name="type" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Enter Type" value="{{ $audio->type }}" /> --}}
                             <!--end::Input-->
                         </div>
                         <!--begin::Actions-->
@@ -76,7 +84,8 @@
                             <button type="submit" class="btn btn-primary">
                                 <span class="indicator-label">Update</span>
                                 <span class="indicator-progress">
-                                    Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                    Please wait... <span
+                                        class="spinner-border spinner-border-sm align-middle ms-2"></span>
                                 </span>
                             </button>
                         </div>

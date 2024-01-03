@@ -18,7 +18,7 @@ class VideoController extends Controller
     public function index()
     {
         $videos = Video::all();
-        return view('videos.index', compact('videos'));
+        return view('pages.apps.videos.index', compact('videos'));
     }
 
     // public function create()
@@ -167,7 +167,7 @@ class VideoController extends Controller
     public function edit($id)
 {
     $videos = Video::findOrFail($id);
-    return view('videos.edit', compact('videos'));
+    return view('pages.apps.videos.edit', compact('videos'));
 }
 public function update(Request $request, $id)
 {

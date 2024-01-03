@@ -10,72 +10,89 @@ class AudioController extends Controller
 {
     public function index()
     {
-        $audios = Audio::all();
-        return view('audios.index', compact('audios'));
+        try {
+            # code...
+            $audios = Audio::all();
+            return view('pages.apps.audios.index', compact('audios'));
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'Something went wrong');
+        }
     }
 
     public function create()
     {
-        return view('audios.index');
+        return view('pages.apps.audios.index');
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required',
-            'audio_file' => 'required|mimes:mp3,wav',
-        ]);
 
-        $audioFile = $request->file('audio_file');
-        $file_path = $audioFile->store('audio_files', 'public');
+        try {
+            # code...
+            $request->validate([
+                'title' => 'required',
+                'audio_file' => 'required|mimes:mp3,wav',
+            ]);
 
-        Audio::create([
-            'title' => $request->input('title'),
-            'file_path' => $file_path,
-            'type'=>$request->input('type'),
-        ]);
+            $audioFile = $request->file('audio_file');
+            $file_path = $audioFile->store('audio_files', 'public');
 
-        return redirect()->route('audios.index')->with('success', 'Audio uploaded successfully');
+            Audio::create([
+                'title' => $request->input('title'),
+                'file_path' => $file_path,
+                'type'=>$request->input('type'),
+            ]);
+
+            return redirect()->route('audios.index')->with('success', 'Audio uploaded successfully');
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'Something went wrong');
+        }
     }
     public function destroy($id)
-{
-    $audio = Audio::findOrFail($id);
+    {
+        $audio = Audio::findOrFail($id);
 
-    // Delete the audio file from storage
-    Storage::disk('public')->delete($audio->file_path);
-
-    // Delete the audio record from the database
-    $audio->delete();
-
-    return redirect()->route('audios.index')->with('success', 'Audio deleted successfully');
-}
-public function edit($id)
-{
-    $audio = Audio::findOrFail($id);
-    return view('audios.edit', compact('audio'));
-}
-public function update(Request $request, $id)
-{
-    // $request->validate([
-    //     'title' => 'required',
-    //     'audio_file' => 'nullable|mimes:mp3,wav', // Allow audio file to be optional during update
-    // ]);
-
-    $audio = Audio::findOrFail($id);
-
-    $audio->title = $request->input('title');
-    $audio->type = $request->input('type');
-    if ($request->hasFile('audio_file')) {
-        // Delete the existing audio file from storage
+        // Delete the audio file from storage
         Storage::disk('public')->delete($audio->file_path);
 
-        // Upload the new audio file
-        $audioFile = $request->file('audio_file');
-        $audio->file_path = $audioFile->store('audio_files', 'public');
+        // Delete the audio record from the database
+        $audio->delete();
+
+        return redirect()->route('audios.index')->with('success', 'Audio deleted successfully');
     }
+    public function edit($id)
+    {
+        try {
+            # code...
+            $audio = Audio::findOrFail($id);
+            return view('pages.apps.audios.edit', compact('audio'));
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'Something went wrong');
+        }
+    }
+    public function update(Request $request, $id)
+    {
+        try {
+            # code...
+            $audio = Audio::findOrFail($id);
 
-    $audio->save();
+            $audio->title = $request->input('title');
+            $audio->type = $request->input('type');
+            if ($request->hasFile('audio_file')) {
+                // Delete the existing audio file from storage
+                Storage::disk('public')->delete($audio->file_path);
 
-    return redirect()->route('audios.index')->with('success', 'Audio updated successfully');
-}
+                // Upload the new audio file
+                $audioFile = $request->file('audio_file');
+                $audio->file_path = $audioFile->store('audio_files', 'public');
+            }
+
+            $audio->save();
+
+            return redirect()->route('audios.index')->with('success', 'Audio updated successfully');
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'Something went wrong');
+        }
+
+    }
 }

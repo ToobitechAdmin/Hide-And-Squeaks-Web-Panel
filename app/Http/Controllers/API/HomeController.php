@@ -8,10 +8,11 @@ use App\Models\Audio;
 use App\Models\Video;
 use App\Models\Like;
 use App\Models\Comment;
-use App\Models\Pet;
+use App\Models\User;
 use App\Models\View;
 use App\Models\Ensurance;
 use Validator;
+use Str;
 
 use App\Http\Controllers\API\BaseController as BaseController;
 
@@ -41,45 +42,41 @@ class HomeController extends BaseController
 public function profilePost(Request $request)
 {
     try {
-    //code...
-    $validator = Validator::make($request->all(), [
-        'pet_name' => 'required|string',
-        'pet_breed' => 'required|string',
 
-        // 'age' => 'required',
-    ]);
+        $validator = Validator::make($request->all(), [
+            'pet_name' => 'required|string',
+            'pet_breed' => 'required|string',
 
-    if($validator->fails()){
-        return $this->sendError($validator->errors()->first());
+            // 'age' => 'required',
+        ]);
 
-    }
+        if($validator->fails()){
+            return $this->sendError($validator->errors()->first());
 
-    $user_id = auth()->user()->id;
-    if($request->hasFile('profile'))
-    {
-        $img = Str::random(20).$request->file('profile')->getClientOriginalName();
-        $input['profile'] = 'documents/profile/'.$img;
-        $request->profile->move(public_path("documents/profile"), $img);
-    }
-
-    $input['pet_name'] = $request->pet_name;
-    $input['pet_breed'] = $request->pet_breed;
-    $input['pet_age'] = $request->pet_age;
-    $pet =User::find($user_id)->update($input) ;
-
-    $response = [
-
-            'name' => $pet->name,
-            'breed' => $pet->breed,
-            'age' =>$pet->age,
-            'status' => $pet->status,
-            'user_id'=>$pet->user_id,
-
-    ];
-
-    return $this->sendResponse($response,'Profile Added');
         }
-        catch (\Throwable $th)
+
+        $user_id = auth()->user()->id;
+        if($request->hasFile('profile'))
+        {
+            $img = Str::random(20).$request->file('profile')->getClientOriginalName();
+            $input['profile'] = 'documents/profile/'.$img;
+            $request->profile->move(public_path("documents/profile"), $img);
+        }
+
+        $input['pet_name'] = $request->pet_name;
+        $input['pet_breed'] = $request->pet_breed;
+        $input['pet_age'] = $request->pet_age;
+        $pet =User::find($user_id);
+        $update_pet = $pet->update($input);
+        $response = [
+            'name' => $pet->pet_name,
+            'breed' => $pet->pet_breed,
+            'age' =>$pet->pet_age,
+            'profile'=>$pet->profile,
+        ];
+
+        return $this->sendResponse($response,'Profile Added');
+    } catch (\Throwable $th)
          {
     return $this->sendError('Something went wrong');
          }
