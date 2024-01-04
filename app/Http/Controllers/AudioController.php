@@ -42,7 +42,7 @@ class AudioController extends Controller
                 'title' => $request->input('title'),
                 'file_path' => $file_path,
                 'type'=>$request->input('type'),
-                'price' =>$request->input('price'),
+                'price' =>$request->input('price')??0.00,
             ]);
 
             return redirect()->route('audios.index')->with('success', 'Audio uploaded successfully');
@@ -80,7 +80,7 @@ class AudioController extends Controller
 
             $audio->title = $request->input('title');
             $audio->type = $request->input('type');
-            $audio->price = $request->input('price');
+            $audio->price = $request->input('price')??0.00;
 
             if ($request->hasFile('audio_file')) {
                 // Delete the existing audio file from storage
