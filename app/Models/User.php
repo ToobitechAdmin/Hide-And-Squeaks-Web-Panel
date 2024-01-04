@@ -12,10 +12,13 @@ use Laravel\Passport\HasApiTokens;
 
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-class User extends Authenticatable
+use Stephenjude\Wallet\Interfaces\Wallet;
+use Stephenjude\Wallet\Traits\HasWallet;
+class User extends Authenticatable implements Wallet
 {
     use HasApiTokens, HasFactory, Notifiable;
     use HasRoles;
+    use HasWallet;
 
     /**
      * The attributes that are mass assignable.
