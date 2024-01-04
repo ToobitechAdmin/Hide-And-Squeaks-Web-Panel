@@ -86,42 +86,30 @@ class HomeController extends BaseController
 
         }
         try {
-            $user_id = auth()->user()->id;
+            $user = auth()->user();
+
+            $user_id = $user->id;
             $audio = Audio::where('id',$request->audio_id)->where('type','paid')->first();
             if (!isset($audio)) {
                 return $this->sendError('Audio Not Found');
             }
-            return $audio;
-
-
-            if ($audio->type == 'paid') {
-                $check = UserPaidSoundCount::where([
-                    'user_id'=>$user_id,
-                    'audio_id'=> $request->audio_id
-                ])->count();
-                $data['count'] = $check;
-                if ($check >= 3) {
-                    return $this->sendResponse($data,'First Buy Sound');
-                }
-                UserPaidSoundCount::create([
-                    'user_id'=>$user_id,
-                    'audio_id'=> $request->audio_id
-                ]);
-                return $this->sendResponse($data,'Listen Sound');
-            }else{
-                $check = UserSound::where([
-                    'user_id'=>$user_id,
-                    'audio_id'=> $request->audio_id
-                ])->first();
-                if (isset($check)) {
-                    return $this->sendError('Already Exist');
-                }
-                UserSound::create([
-                    'user_id'=>$user_id,
-                    'audio_id'=> $request->audio_id
-                ]);
+            $check = UserSound::where([
+                'user_id'=>$user_id,
+                'audio_id'=> $request->audio_id
+            ])->first();
+            if (isset($check)) {
+                return $this->sendError('Already Exist');
             }
+            if ($audio->price > $user->balance) {
+                return $this->sendError('Insufficient Balance');
+            }
+            $user->withdraw($audio->price);
+            UserSound::create([
+                'user_id'=>$user_id,
+                'audio_id'=> $request->audio_id
+            ]);
             return $this->sendResponse($response = [],'Add My Library');
+
         } catch (\Throwable $e) {
             return $this->sendError('Something went wrong');
         }

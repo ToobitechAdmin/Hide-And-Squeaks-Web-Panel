@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('title')->nullable();
             $table->string('file_path')->nullable();
             $table->enum('type', ['free', 'paid'])->nullable()->default('free');
+            $table->decimal('price', 11, 2)->nullable()->default(0.00);
             $table->timestamps();
         });
     }
