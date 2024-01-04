@@ -182,6 +182,18 @@
                                             {{-- <input type="text" name="type" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Enter Type" /> --}}
                                             <!--end::Input-->
                                         </div> <!--end::Roles-->
+
+                                        <div class="fv-row mb-7">
+                                            <!--begin::Label-->
+                                            <label class="required fw-semibold fs-6 mb-2" name="price">Treats</label>
+                                            <!--end::Label-->
+
+                                            <!--begin::Input-->
+                                            <input type="text" name="price"
+                                                class="form-control form-control-solid mb-3 mb-lg-0"
+                                                placeholder="Enter Treats" />
+                                            <!--end::Input-->
+                                        </div>
                                     </div>
                                     <!--end::Input group-->
                             </div>
@@ -226,7 +238,9 @@
                             </th>
                             <th>Title</th>
                             <th>Audio</th>
+                            <th>Treats</th>
                             <th>Type</th>
+
                             {{-- <th>Download</th> --}}
                             <th>Action</th>
 
@@ -253,6 +267,7 @@
                                     Your browser does not support the audio tag.
                                 </audio>
                             </td>
+                            <td>{{ $audio->price }}</td>
                             <td>{{ $audio->type }}</td>
                             {{-- <td><a href="{{ asset('storage/' . $audio->file_path) }}" download>Download</a></td> --}}
                             <td class="actions">

@@ -22,7 +22,8 @@
             <!--begin::Modal body-->
             <div class="modal-body scroll-y mx-5 mx-xl-15 my-7">
                 <!--begin::Form-->
-                <form id="kt_modal_update_password_form" class="form" action="#">
+                <form id="kt_modal_update_password_form" class="form" action="{{route('myprofileUpdatePassword')}}">
+
                     <!--begin::Input group=-->
                     <div class="fv-row mb-10">
                         <label class="required form-label fs-6 mb-2">Current Password</label>

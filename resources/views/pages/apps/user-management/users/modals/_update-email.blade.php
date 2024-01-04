@@ -22,7 +22,7 @@
             <!--begin::Modal body-->
             <div class="modal-body scroll-y mx-5 mx-xl-15 my-7">
                 <!--begin::Form-->
-                <form id="kt_modal_update_email_form" class="form" action="#">
+                <form id="kt_modal_update_email_form" class="form" action="{{route('myprofileUpdateEmail')}}">
                     <!--begin::Notice-->
                     <!--begin::Notice-->
                     <div class="notice d-flex bg-light-primary rounded border-primary border border-dashed mb-9 p-6">
@@ -53,7 +53,7 @@
                         </label>
                         <!--end::Label-->
                         <!--begin::Input-->
-                        <input class="form-control form-control-solid" placeholder="" name="profile_email" value="smith@kpmg.com" />
+                        <input class="form-control form-control-solid" placeholder="" name="email" value="{{$user->email}}" />
                         <!--end::Input-->
                     </div>
                     <!--end::Input group-->

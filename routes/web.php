@@ -56,6 +56,10 @@ Route::put('videos/{video}', [VideoController::class, 'update'])->name('videos.u
 Route::resource('/product-management/products', ProductManagementController::class);
 Route::resource('ensurance', EnsuranceController::class);
 Route::resource('treats-deal', TreatsDealController::class);
+Route::get('/my-profile', [UserManagementController::class,'myProfile'])->name('myprofile');
+Route::get('/my-profile-update-email', [UserManagementController::class,'myProfileUpdateEmail'])->name('myprofileUpdateEmail');
+Route::get('/my-profile-update-name', [UserManagementController::class,'myProfileUpdateName'])->name('myprofileUpdateName');
+Route::get('/my-profile-update-password', [UserManagementController::class,'myProfileUpdatePassword'])->name('myprofileUpdatePassword');
 
 
 
