@@ -75,6 +75,58 @@ class HomeController extends BaseController
         }
     }
 
+    public function addPaidSoundMyLibrary(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'audio_id' => 'required',
+        ]);
+
+        if($validator->fails()){
+            return $this->sendError($validator->errors()->first());
+
+        }
+        try {
+            $user_id = auth()->user()->id;
+            $audio = Audio::where('id',$request->audio_id)->where('type','paid')->first();
+            if (!isset($audio)) {
+                return $this->sendError('Audio Not Found');
+            }
+            return $audio;
+
+
+            if ($audio->type == 'paid') {
+                $check = UserPaidSoundCount::where([
+                    'user_id'=>$user_id,
+                    'audio_id'=> $request->audio_id
+                ])->count();
+                $data['count'] = $check;
+                if ($check >= 3) {
+                    return $this->sendResponse($data,'First Buy Sound');
+                }
+                UserPaidSoundCount::create([
+                    'user_id'=>$user_id,
+                    'audio_id'=> $request->audio_id
+                ]);
+                return $this->sendResponse($data,'Listen Sound');
+            }else{
+                $check = UserSound::where([
+                    'user_id'=>$user_id,
+                    'audio_id'=> $request->audio_id
+                ])->first();
+                if (isset($check)) {
+                    return $this->sendError('Already Exist');
+                }
+                UserSound::create([
+                    'user_id'=>$user_id,
+                    'audio_id'=> $request->audio_id
+                ]);
+            }
+            return $this->sendResponse($response = [],'Add My Library');
+        } catch (\Throwable $e) {
+            return $this->sendError('Something went wrong');
+        }
+    }
+
     public function myLibrary()
     {
         try {
@@ -440,6 +492,19 @@ class HomeController extends BaseController
 
             $data = Treat::all();
             return $this->sendResponse($data,'Purchase Deals');
+        } catch (\Throwable $th) {
+            return $this->sendError('Something went wrong');
+        }
+
+    }
+
+    public function myBalance()
+    {
+        try {
+            $user = auth()->user();
+
+            $data['balance'] = $user->balance;
+            return $this->sendResponse($data,'My Balance');
         } catch (\Throwable $th) {
             return $this->sendError('Something went wrong');
         }

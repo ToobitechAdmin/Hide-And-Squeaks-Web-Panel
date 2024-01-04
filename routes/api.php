@@ -56,6 +56,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/audio', 'getAudio');
     Route::get('/my-library', 'myLibrary');
     Route::POST('/add-my-library', 'addMyLibrary');
+    Route::POST('/add-paid-sound-my-library', 'addPaidSoundMyLibrary');
+
     Route::POST('/del-from-library', 'delFromLibrary');
     Route::POST('play-paid-sound','playPaidSound');
 
@@ -63,6 +65,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/view-video', 'videoById');
     Route::post('/add-view', 'addView');
     Route::get('/list-treats', 'treatsList');
+    Route::get('/my-balance', 'myBalance');
     });
 
 
