@@ -71,9 +71,9 @@
                             <!--end::Label-->
                             <select class="form-select form-select-solid form-select-sm" name="status"
                                 data-control="select2" data-hide-search="true">
-                                <option value="not-buy" @if ($treats->status == 'Not-buy') selected @endif selected>Not-Buy
+                                <option value="0" @if ($treats->status == 0) selected @endif selected>Off
                                 </option>
-                                <option value="buy" @if ($treats->status == 'Buy') selected @endif>Buy</option>
+                                <option value="1" @if ($treats->status == 1) selected @endif>On</option>
                             </select>
                             <!--begin::Input-->
                             {{-- <input type="text" name="type" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Enter Type" value="{{ $audio->type }}" /> --}}

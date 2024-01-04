@@ -1,7 +1,7 @@
 <x-default-layout>
 
     @section('title')
-       Treats Deal
+        Treats Deal
     @endsection
     @section('breadcrumbs')
         {{ Breadcrumbs::render('treats-deal.index') }}
@@ -79,7 +79,8 @@
                             <div class="modal-body scroll-y mx-5 mx-xl-15 my-7">
                                 <!--begin::Form-->
                                 <form id="kt_modal_export_users_form" class="form"
-                                    action="{{ route('treats-deal.store') }}" method="POST" enctype="multipart/form-data">
+                                    action="{{ route('treats-deal.store') }}" method="POST"
+                                    enctype="multipart/form-data">
 
                                     <div class="text-center">
 
@@ -132,8 +133,9 @@
                             <!--begin::Modal body-->
                             <div class="modal-body px-5 my-7">
                                 <!--begin::Form-->
-                                <form id="kt_modal_add_user_form" class="form" action="{{ route('treats-deal.store') }}"
-                                    method="POST" enctype="multipart/form-data">
+                                <form id="kt_modal_add_user_form" class="form"
+                                    action="{{ route('treats-deal.store') }}" method="POST"
+                                    enctype="multipart/form-data">
                                     @csrf
 
                                     <!--begin::Scroll-->
@@ -175,10 +177,10 @@
                                             <!--end::Label-->
 
                                             <!--begin::Input-->
-                                            <select class="form-select form-select-solid form-select-sm" name="status"
-                                                data-control="select2" data-hide-search="true">
-                                                <option value="not-buy" selected>Not-buy</option>
-                                                <option value="buy">Buy</option>
+                                            <select class="form-select form-select-solid form-select-sm"
+                                                name="status" data-control="select2" data-hide-search="true">
+                                                <option value="1" selected>On</option>
+                                                <option value="0">Off</option>
                                             </select>
                                             {{-- <input type="text" name="type" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Enter Type" /> --}}
                                             <!--end::Input-->
@@ -250,7 +252,9 @@
                             <td>{{ $treats->treats }}</td>
 
                             <td>{{ $treats->price }}</td>
-                            <td>{{ $treats->status }}</td>
+                            <td>
+
+                                {{ $treats->status == 1? 'ON':"Off" }}</td>
                             {{-- <td><a href="{{ asset('storage/' . $audio->file_path) }}" download>Download</a></td> --}}
                             <td class="actions">
                                 <form action="{{ route('treats-deal.destroy', $treats->id) }}" method="post"
