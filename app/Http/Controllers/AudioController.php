@@ -32,6 +32,7 @@ class AudioController extends Controller
             $request->validate([
                 'title' => 'required',
                 'audio_file' => 'required|mimes:mp3,wav',
+
             ]);
 
             $audioFile = $request->file('audio_file');
@@ -41,6 +42,7 @@ class AudioController extends Controller
                 'title' => $request->input('title'),
                 'file_path' => $file_path,
                 'type'=>$request->input('type'),
+                'price' =>$request->input('price'),
             ]);
 
             return redirect()->route('audios.index')->with('success', 'Audio uploaded successfully');
@@ -78,6 +80,8 @@ class AudioController extends Controller
 
             $audio->title = $request->input('title');
             $audio->type = $request->input('type');
+            $audio->price = $request->input('price');
+
             if ($request->hasFile('audio_file')) {
                 // Delete the existing audio file from storage
                 Storage::disk('public')->delete($audio->file_path);
