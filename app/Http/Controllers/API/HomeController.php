@@ -11,6 +11,9 @@ use App\Models\Comment;
 use App\Models\User;
 use App\Models\View;
 use App\Models\Ensurance;
+use App\Models\UserSound;
+use App\Models\UserPaidSoundCount;
+
 use Validator;
 use Str;
 
@@ -19,20 +22,120 @@ use App\Http\Controllers\API\BaseController as BaseController;
 class HomeController extends BaseController
 {
     //Audio Controller functions
+    /* MY LIBRARY */
+    public function addMyLibrary(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'audio_id' => 'required',
+        ]);
+
+        if($validator->fails()){
+            return $this->sendError($validator->errors()->first());
+
+        }
+        try {
+            $user_id = auth()->user()->id;
+            $check = UserSound::where([
+                'user_id'=>$user_id,
+                'audio_id'=> $request->audio_id
+            ])->first();
+            if (isset($check)) {
+                return $this->sendError('Already Exist');
+            }
+            UserSound::create([
+                'user_id'=>$user_id,
+                'audio_id'=> $request->audio_id
+            ]);
+            return $this->sendResponse($response = [],'Add My Library');
+        } catch (\Throwable $e) {
+            return $this->sendError('Something went wrong');
+        }
+    }
+
+    public function myLibrary()
+    {
+        try {
+            $user_id = auth()->user()->id;
+            $data = UserSound::with(['audio'])->where([
+                'user_id'=>$user_id,
+            ])->get();
+
+
+            return $this->sendResponse($data,'My Library');
+        } catch (\Throwable $e) {
+            return $this->sendError('Something went wrong');
+        }
+    }
+
+    public function playPaidSound(Request $request){
+        $validator = Validator::make($request->all(), [
+            'audio_id' => 'required',
+        ]);
+
+        if($validator->fails()){
+            return $this->sendError($validator->errors()->first());
+
+        }
+        try {
+            $user_id = auth()->user()->id;
+            $check = UserPaidSoundCount::where([
+                'user_id'=>$user_id,
+                'audio_id'=> $request->audio_id
+            ])->count();
+            $data['count'] = $check;
+            if ($check >= 3) {
+                return $this->sendResponse($data,'First Buy Sound');
+            }
+            UserPaidSoundCount::create([
+                'user_id'=>$user_id,
+                'audio_id'=> $request->audio_id
+            ]);
+            return $this->sendResponse($data,'Listen A Sound');
+        } catch (\Throwable $e) {
+            return $this->sendError('Something went wrong');
+        }
+    }
+    public function delFromLibrary(Request $request){
+        $validator = Validator::make($request->all(), [
+            'audio_id' => 'required',
+        ]);
+
+        if($validator->fails()){
+            return $this->sendError($validator->errors()->first());
+
+        }
+        try {
+            $user_id = auth()->user()->id;
+            $check = UserSound::where([
+                'user_id'=>$user_id,
+                'audio_id'=> $request->audio_id
+            ])->first();
+            if (!isset($check)) {
+                return $this->sendError('Audio Not Found');
+            }
+            $check->delete();
+
+            return $this->sendResponse($response = [],'Delete From My Library');
+        } catch (\Throwable $e) {
+            return $this->sendError('Something went wrong');
+        }
+    }
 
     public function getAudio()
-{
-      try {
+    {
+        try {
 
-          $audio = Audio::all();
+            $audio = Audio::all();
 
-         return $this->sendResponse($audio);
+            return $this->sendResponse($audio);
+        }
+        catch (\Throwable $th) {
+
+            return $this->sendError('Something went wrong');
+        }
     }
-    catch (\Throwable $th) {
 
-        return $this->sendError('Something went wrong');
-    }
-}
+     /* MY LIBRARY */
 
 //Audio controller functions end
 
@@ -103,7 +206,7 @@ public function getLegal()
    }
    catch (\Throwable $th) {
     return $this->sendError('Something went wrong');
-}
+    }
 }
 
 //Profile controller functions end

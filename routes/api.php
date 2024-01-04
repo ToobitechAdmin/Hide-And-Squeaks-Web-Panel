@@ -54,6 +54,10 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/upload-like', 'likePost');
 
     Route::get('/audio', 'getAudio');
+    Route::get('/my-library', 'myLibrary');
+    Route::POST('/add-my-library', 'addMyLibrary');
+    Route::POST('/del-from-library', 'delFromLibrary');
+    Route::POST('play-paid-sound','playPaidSound');
 
     Route::get('/paragraph', 'getLegal');
     Route::post('/view-video', 'videoById');
