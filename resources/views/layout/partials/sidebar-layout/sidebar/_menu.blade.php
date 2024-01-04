@@ -136,7 +136,14 @@
                 </a>
                 <!--end:Menu link-->
             </div>
-
+            <div class="menu-item">
+                <!--begin:Menu link-->
+                <a class="menu-link" href="{{ route('treats-deal.index') }}">
+                    <span class="menu-icon">{!! getIcon('abstract-28', 'fs-2') !!}</span>
+                    <span class="menu-title">Treats Deals</span>
+                </a>
+                <!--end:Menu link-->
+            </div>
 
 
 

@@ -12,6 +12,7 @@ use App\Http\Controllers\VideoController;
 use App\Http\Controllers\ProductManagementController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\EnsuranceController;
+use App\Http\Controllers\Apps\TreatsDealController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +55,7 @@ Route::put('videos/{video}', [VideoController::class, 'update'])->name('videos.u
 //product management route
 Route::resource('/product-management/products', ProductManagementController::class);
 Route::resource('ensurance', EnsuranceController::class);
+Route::resource('treats-deal', TreatsDealController::class);
 
 
 
