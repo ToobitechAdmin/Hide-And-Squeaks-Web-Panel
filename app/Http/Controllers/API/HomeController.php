@@ -13,6 +13,7 @@ use App\Models\View;
 use App\Models\Ensurance;
 use App\Models\UserSound;
 use App\Models\UserPaidSoundCount;
+use App\Models\Treat;
 
 use Validator;
 use Str;
@@ -177,185 +178,181 @@ class HomeController extends BaseController
 
 //Profile Controller functions
 
-public function profilePost(Request $request)
-{
-    try {
+    public function profilePost(Request $request)
+    {
+        try {
 
-        $validator = Validator::make($request->all(), [
-            'pet_name' => 'required|string',
-            'pet_breed' => 'required|string',
+            $validator = Validator::make($request->all(), [
+                'pet_name' => 'required|string',
+                'pet_breed' => 'required|string',
 
-            // 'age' => 'required',
-        ]);
+                // 'age' => 'required',
+            ]);
 
-        if($validator->fails()){
-            return $this->sendError($validator->errors()->first());
+            if($validator->fails()){
+                return $this->sendError($validator->errors()->first());
 
-        }
+            }
 
-        $user_id = auth()->user()->id;
-        if($request->hasFile('profile'))
-        {
-            $img = Str::random(20).$request->file('profile')->getClientOriginalName();
-            $input['profile'] = 'documents/profile/'.$img;
-            $request->profile->move(public_path("documents/profile"), $img);
-        }
+            $user_id = auth()->user()->id;
+            if($request->hasFile('profile'))
+            {
+                $img = Str::random(20).$request->file('profile')->getClientOriginalName();
+                $input['profile'] = 'documents/profile/'.$img;
+                $request->profile->move(public_path("documents/profile"), $img);
+            }
 
-        $input['pet_name'] = $request->pet_name;
-        $input['pet_breed'] = $request->pet_breed;
-        $input['pet_age'] = $request->pet_age;
-        $pet =User::find($user_id);
-        $update_pet = $pet->update($input);
-        $response = [
-            'name' => $pet->pet_name,
-            'breed' => $pet->pet_breed,
-            'age' =>$pet->pet_age,
-            'profile'=>$pet->profile,
-        ];
+            $input['pet_name'] = $request->pet_name;
+            $input['pet_breed'] = $request->pet_breed;
+            $input['pet_age'] = $request->pet_age;
+            $pet =User::find($user_id);
+            $update_pet = $pet->update($input);
+            $response = [
+                'name' => $pet->pet_name,
+                'breed' => $pet->pet_breed,
+                'age' =>$pet->pet_age,
+                'profile'=>$pet->profile,
+            ];
 
-        return $this->sendResponse($response,'Profile Added');
-    } catch (\Throwable $th)
-         {
-    return $this->sendError('Something went wrong');
-         }
-}
-
-public function getProfile()
-{
-    $user_id = auth()->user()->id;
-    try {
-
-        $profile = User::find($user_id);
-        return $this->sendResponse($profile);
-    } catch (\Throwable $th) {
+            return $this->sendResponse($response,'Profile Added');
+        } catch (\Throwable $th)
+            {
         return $this->sendError('Something went wrong');
+            }
     }
-}
-public function getLegal()
-{
-  try
-  {
-    //code...
-    $para = Ensurance::all();
-    return $this->sendResponse($para);
-   }
-   catch (\Throwable $th) {
-    return $this->sendError('Something went wrong');
+
+    public function getProfile()
+    {
+        $user_id = auth()->user()->id;
+        try {
+
+            $profile = User::find($user_id);
+            return $this->sendResponse($profile);
+        } catch (\Throwable $th) {
+            return $this->sendError('Something went wrong');
+        }
     }
-}
+    public function getLegal()
+    {
+    try
+    {
+        //code...
+        $para = Ensurance::all();
+        return $this->sendResponse($para);
+    }
+    catch (\Throwable $th) {
+        return $this->sendError('Something went wrong');
+        }
+    }
 
 //Profile controller functions end
 
 
 //like Controller functions
 
-public function likePost(Request $request)
-{
-    try {
-        $validator = Validator::make($request->all(), [
-            'video_id' => 'required',
-        ]);
+    public function likePost(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'video_id' => 'required',
+            ]);
 
-        if($validator->fails()){
-            return $this->sendError($validator->errors()->first());
+            if($validator->fails()){
+                return $this->sendError($validator->errors()->first());
 
+            }
+
+            $check_video = Video::find($request->video_id);
+            if (!isset($check_video)) {
+                return $this->sendError('Video Not Found');
+            }
+            $user_id = auth()->id();
+            $check_like = Like::where('user_id',$user_id)->where('video_id',$request->video_id)->first();
+            if (isset($check_like)) {
+                $check_like->delete();
+                return $this->sendResponse($response=[],'Dislike Video');
+            }
+            $like =Like::create([
+                'user_id'=> $user_id,
+                'video_id'=>$request->input('video_id'),
+            ]);
+
+            $response = [
+                'video_id' => $like->video_id,
+            ];
+
+
+        return $this->sendResponse($response,'like Video');
+            //code...
+        } catch (\Throwable $th) {
+            return $this->sendError('Something went wrong');
         }
 
-        $check_video = Video::find($request->video_id);
-        if (!isset($check_video)) {
-            return $this->sendError('Video Not Found');
-        }
-        $user_id = auth()->id();
-        $check_like = Like::where('user_id',$user_id)->where('video_id',$request->video_id)->first();
-        if (isset($check_like)) {
-            $check_like->delete();
-            return $this->sendResponse($response=[],'Dislike Video');
-        }
-        $like =Like::create([
-            'user_id'=> $user_id,
-            'video_id'=>$request->input('video_id'),
-        ]);
-
-        $response = [
-            'video_id' => $like->video_id,
-        ];
-
-
-       return $this->sendResponse($response,'like Video');
-        //code...
-    } catch (\Throwable $th) {
-        return $this->sendError('Something went wrong');
     }
 
-}
+    public function totalNumberOfLikes()
+    {
+        try {
 
-public function totalNumberOfLikes()
-{
-    try {
+            $like = Like::all();
+            return $this->sendResponse($like);
+        } catch (\Throwable $th) {
+            return $this->sendError('Something went wrong');
+        }
 
-        $like = Like::all();
-        return $this->sendResponse($like);
-    } catch (\Throwable $th) {
-        return $this->sendError('Something went wrong');
     }
-
-}
 
 //like controller functions end
 
 
 //Comment Controller functions
 
-public function commentPost(Request $request)
-{
-    try {
-        //code...
-        $validator = Validator::make($request->all(), [
-            'video_id' => 'required',
-            'comment' =>'required',
-        ]);
+    public function commentPost(Request $request)
+    {
+        try {
+            //code...
+            $validator = Validator::make($request->all(), [
+                'video_id' => 'required',
+                'comment' =>'required',
+            ]);
 
-        if($validator->fails()){
-            return $this->sendError($validator->errors()->first());
+            if($validator->fails()){
+                return $this->sendError($validator->errors()->first());
 
+            }
+        // $user = auth()->user();
+
+        $check_video = Video::find($request->video_id);
+        if (!isset($check_video)) {
+            return $this->sendError('Video Not Found');
         }
-       // $user = auth()->user();
+        $user_id = auth()->id();
 
-       $check_video = Video::find($request->video_id);
-       if (!isset($check_video)) {
-           return $this->sendError('Video Not Found');
-       }
-       $user_id = auth()->id();
+            $comment =Comment::create([
+                'comment' => $request->input('comment'),
+                'user_id'=> $user_id,
+                'video_id'=>$request->input('video_id'),
+            ]);
 
-        $comment =Comment::create([
-            'comment' => $request->input('comment'),
-            'user_id'=> $user_id,
-            'video_id'=>$request->input('video_id'),
-        ]);
+            $response = [
 
-        $response = [
+                    'comment' => $comment->comment,
+                    'user_id' => $comment->user_id,
+                    'video_id' => $comment->video_id,
 
-                'comment' => $comment->comment,
-                'user_id' => $comment->user_id,
-                'video_id' => $comment->video_id,
+            ];
 
-        ];
-
-        return $this->sendResponse($response,'Comment Video');
-    } catch (\Throwable $th) {
-        return $this->sendError('Something went wrong');
+            return $this->sendResponse($response,'Comment Video');
+        } catch (\Throwable $th) {
+            return $this->sendError('Something went wrong');
+        }
     }
-}
 
-public function getComment()
-{
-    // $user = auth()->user();
-
-
-
-    $comment = Comment::all();
-    return response()->json($comment);
-}
+    public function getComment()
+    {
+        $comment = Comment::all();
+        return response()->json($comment);
+    }
 
 //Comment controller functions end
 
@@ -363,78 +360,89 @@ public function getComment()
 // view video detail with total_views, total_likes, total_comments
 
 
-public function videoById(Request $request)
-{
-    try {
-        //code...
-        $validator = Validator::make($request->all(), [
-            'video_id' => 'required|exists:videos,id',
-        ]);
+    public function videoById(Request $request)
+    {
+        try {
+            //code...
+            $validator = Validator::make($request->all(), [
+                'video_id' => 'required|exists:videos,id',
+            ]);
 
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 400);
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->errors()], 400);
+            }
+
+            $video = Video::withCount(['comments', 'likes', 'views'])
+                ->findOrFail($request->input('video_id'));
+
+            $response=[
+                'video' => [
+                    'id' => $video->id,
+                    'title' => $video->title,
+                    'description' => $video->description,
+                    'file_path' => $video->file_path,
+                    'comments' => $video->comments->toArray(),
+                    'likes' => $video->likes->toArray(),
+                    'views' => $video->views->toArray(),
+                ],
+                'total_comments' => $video->comments_count,
+                'total_likes' => $video->likes_count,
+                'total_views' => $video->views_count,
+
+            ];
+            return $this->sendResponse($response,'View Video Detail');
+
+        } catch (\Throwable $th) {
+            return $this->sendError('Something went wrong');
         }
-
-        $video = Video::withCount(['comments', 'likes', 'views'])
-            ->findOrFail($request->input('video_id'));
-
-        $response=[
-            'video' => [
-                'id' => $video->id,
-                'title' => $video->title,
-                'description' => $video->description,
-                'file_path' => $video->file_path,
-                'comments' => $video->comments->toArray(),
-                'likes' => $video->likes->toArray(),
-                'views' => $video->views->toArray(),
-            ],
-            'total_comments' => $video->comments_count,
-            'total_likes' => $video->likes_count,
-            'total_views' => $video->views_count,
-
-        ];
-        return $this->sendResponse($response,'View Video Detail');
-
-    } catch (\Throwable $th) {
-        return $this->sendError('Something went wrong');
     }
-}
 
-public function addView(Request $request)
-{
-    try {
-        $validator = Validator::make($request->all(), [
-            'video_id' => 'required',
-        ]);
+    public function addView(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'video_id' => 'required',
+            ]);
 
-        if($validator->fails()){
-            return $this->sendError($validator->errors()->first());
+            if($validator->fails()){
+                return $this->sendError($validator->errors()->first());
 
+            }
+
+            $check_video = Video::find($request->video_id);
+            if (!isset($check_video)) {
+                return $this->sendError('Video Not Found');
+            }
+            $user_id = auth()->id();
+
+            $view =View::create([
+                'user_id'=> $user_id,
+                'video_id'=>$request->input('video_id'),
+            ]);
+
+            $response = [
+                'video_id' => $view->video_id,
+            ];
+
+
+        return $this->sendResponse($response,'View Video');
+            //code...
+        } catch (\Throwable $th) {
+            return $this->sendError('Something went wrong');
         }
-
-        $check_video = Video::find($request->video_id);
-        if (!isset($check_video)) {
-            return $this->sendError('Video Not Found');
-        }
-        $user_id = auth()->id();
-
-        $view =View::create([
-            'user_id'=> $user_id,
-            'video_id'=>$request->input('video_id'),
-        ]);
-
-        $response = [
-            'video_id' => $view->video_id,
-        ];
-
-
-       return $this->sendResponse($response,'View Video');
-        //code...
-    } catch (\Throwable $th) {
-        return $this->sendError('Something went wrong');
     }
-}
 
 // view video detail with total_views, total_likes, total_comments ---end
+    /* List of Treats */
+    public function treatsList()
+    {
+        try {
 
+            $data = Treat::all();
+            return $this->sendResponse($data,'Purchase Deals');
+        } catch (\Throwable $th) {
+            return $this->sendError('Something went wrong');
+        }
+
+    }
 }

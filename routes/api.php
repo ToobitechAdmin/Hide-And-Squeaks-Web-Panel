@@ -62,7 +62,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/paragraph', 'getLegal');
     Route::post('/view-video', 'videoById');
     Route::post('/add-view', 'addView');
-
+    Route::get('/list-treats', 'treatsList');
     });
 
 

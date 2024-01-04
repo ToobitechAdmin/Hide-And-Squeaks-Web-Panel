@@ -15,20 +15,20 @@ class TreatsSeeder extends Seeder
         $treatsDemo = Treat::create([
             'treats'=> 300,
             'price' => 35,
-            'status'=> 'Not-buy',
+
 
         ]);
 
         $treatsDemo2 = Treat::create([
             'treats'=> 500,
             'price' => 50,
-            'status'=> 'Not-buy',
+
 
         ]);
         $treatsDemo2 = Treat::create([
             'treats'=> 1000,
             'price' => 75,
-            'status'=> 'Not-buy',
+
 
         ]);
     }

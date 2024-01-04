@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('treats')->nullable();
             $table->double('price')->nullable();
-            $table->enum('status', ['Buy', 'Not-buy'])->nullable()->default('Not-buy');
+            $table->tinyInteger('status')->nullable()->default(1);
 
             $table->timestamps();
         });
