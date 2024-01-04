@@ -35,17 +35,39 @@ class HomeController extends BaseController
         }
         try {
             $user_id = auth()->user()->id;
-            $check = UserSound::where([
-                'user_id'=>$user_id,
-                'audio_id'=> $request->audio_id
-            ])->first();
-            if (isset($check)) {
-                return $this->sendError('Already Exist');
+            $audio = Audio::find($request->audio_id);
+            if (!isset($audio)) {
+                return $this->sendError('Audio Not Found');
             }
-            UserSound::create([
-                'user_id'=>$user_id,
-                'audio_id'=> $request->audio_id
-            ]);
+
+
+            if ($audio->type == 'paid') {
+                $check = UserPaidSoundCount::where([
+                    'user_id'=>$user_id,
+                    'audio_id'=> $request->audio_id
+                ])->count();
+                $data['count'] = $check;
+                if ($check >= 3) {
+                    return $this->sendResponse($data,'First Buy Sound');
+                }
+                UserPaidSoundCount::create([
+                    'user_id'=>$user_id,
+                    'audio_id'=> $request->audio_id
+                ]);
+                return $this->sendResponse($data,'Listen Sound');
+            }else{
+                $check = UserSound::where([
+                    'user_id'=>$user_id,
+                    'audio_id'=> $request->audio_id
+                ])->first();
+                if (isset($check)) {
+                    return $this->sendError('Already Exist');
+                }
+                UserSound::create([
+                    'user_id'=>$user_id,
+                    'audio_id'=> $request->audio_id
+                ]);
+            }
             return $this->sendResponse($response = [],'Add My Library');
         } catch (\Throwable $e) {
             return $this->sendError('Something went wrong');
@@ -67,34 +89,34 @@ class HomeController extends BaseController
         }
     }
 
-    public function playPaidSound(Request $request){
-        $validator = Validator::make($request->all(), [
-            'audio_id' => 'required',
-        ]);
+    // public function playPaidSound(Request $request){
+    //     $validator = Validator::make($request->all(), [
+    //         'audio_id' => 'required',
+    //     ]);
 
-        if($validator->fails()){
-            return $this->sendError($validator->errors()->first());
+    //     if($validator->fails()){
+    //         return $this->sendError($validator->errors()->first());
 
-        }
-        try {
-            $user_id = auth()->user()->id;
-            $check = UserPaidSoundCount::where([
-                'user_id'=>$user_id,
-                'audio_id'=> $request->audio_id
-            ])->count();
-            $data['count'] = $check;
-            if ($check >= 3) {
-                return $this->sendResponse($data,'First Buy Sound');
-            }
-            UserPaidSoundCount::create([
-                'user_id'=>$user_id,
-                'audio_id'=> $request->audio_id
-            ]);
-            return $this->sendResponse($data,'Listen A Sound');
-        } catch (\Throwable $e) {
-            return $this->sendError('Something went wrong');
-        }
-    }
+    //     }
+    //     try {
+    //         $user_id = auth()->user()->id;
+    //         $check = UserPaidSoundCount::where([
+    //             'user_id'=>$user_id,
+    //             'audio_id'=> $request->audio_id
+    //         ])->count();
+    //         $data['count'] = $check;
+    //         if ($check >= 3) {
+    //             return $this->sendResponse($data,'First Buy Sound');
+    //         }
+    //         UserPaidSoundCount::create([
+    //             'user_id'=>$user_id,
+    //             'audio_id'=> $request->audio_id
+    //         ]);
+    //         return $this->sendResponse($data,'Listen A Sound');
+    //     } catch (\Throwable $e) {
+    //         return $this->sendError('Something went wrong');
+    //     }
+    // }
     public function delFromLibrary(Request $request){
         $validator = Validator::make($request->all(), [
             'audio_id' => 'required',
@@ -126,7 +148,20 @@ class HomeController extends BaseController
         try {
 
             $audio = Audio::all();
+            $user_id = auth()->user()->id;
+            /* Add Count Variable  */
+            foreach ($audio as $key => $value) {
 
+                if ($value->type == 'free') {
+                    $value->count = 0;
+                }else{
+                    $audio_count = UserPaidSoundCount::where([
+                        'user_id'=>$user_id,
+                        'audio_id'=> $value->id
+                    ])->count();
+                    $value->count = $audio_count;
+                }
+            }
             return $this->sendResponse($audio);
         }
         catch (\Throwable $th) {
