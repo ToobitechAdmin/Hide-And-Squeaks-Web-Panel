@@ -5,9 +5,71 @@ use Illuminate\Support\Facades\Storage; // Add this line
 
 use Illuminate\Http\Request;
 use App\Models\Audio;
-
+// use VideoThumbnail;
+use Str;
+use Symfony\Component\HttpFoundation\Response; // Make sure to import Response
+use Pawlox\VideoThumbnail\VideoThumbnail;
+use FFMpeg;
+use FFMpeg\Coordinate\TimeCode;
 class AudioController extends Controller
 {
+    public function formVideo(){
+        return  view('pages.apps.testing.index');
+    }
+
+    public function postVedio(Request $request){
+        // if ($request->hasFile('video')) {
+        //     $video = $request->file('video');
+        //     $img = Str::random(20) . $video->getClientOriginalName();
+
+        //     // Move the uploaded video to a location
+        //     $video->move(public_path('documents/profile-testing'), $img);
+
+        //     // Generate Thumbnail
+        //     $thumbnailPath = public_path('documents/thumbs/');
+        //     $thumbnailName = Str::random(20).'.jpeg';
+        //     $videoPath = public_path("documents/profile-testing/{$img}");
+        //     $videoThumbnail = new VideoThumbnail();
+        //     try {
+        //         $videoThumbnail->createThumbnail(
+        //             $videoPath,
+        //             $thumbnailPath,
+        //             $thumbnailName,
+        //             2,
+
+        //         );
+        //         return new Response('Thumbnail generated successfully');
+        //     } catch (\Exception $e) {
+        //         return new Response('Error generating thumbnail: ' . $e->getMessage(), 500);
+        //     }
+        // }
+
+        // return new Response('No video file provided', 400);
+        $video = $request->file('video');
+
+        // Save the video to the storage disk
+        return $videoPath = $video->store('videos', 'public');
+
+        // Generate thumbnail
+        $thumbnailPath = $this->generateThumbnail($videoPath);
+
+        // Save video details to the database if needed
+
+        return response()->json(['video_path' => $videoPath, 'thumbnail_path' => $thumbnailPath]);
+    }
+    private function generateThumbnail($videoPath)
+    {
+        dd($videoPath);
+        $thumbnailPath = 'thumbnails/' . pathinfo($videoPath, PATHINFO_FILENAME) . '.jpg';
+        FFMpeg::fromDisk('public')
+            ->open($videoPath)
+            ->getFrameFromSeconds(1) // Adjust the time (in seconds) to capture the frame
+            ->export()
+            ->toDisk('public')
+            ->save($thumbnailPath);
+
+        return $thumbnailPath;
+    }
     public function index()
     {
         try {

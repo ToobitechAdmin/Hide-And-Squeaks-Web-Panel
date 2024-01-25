@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->string('last_name')->nullable();
             $table->string('password')->nullable();
-            $table->string('profile')->nullable()->default('documents/profile/default.png');
+            $table->string('profile')->nullable()->default('default.png');
             $table->string('device_token')->nullable();
             $table->string('email')->unique();
             $table->integer('otp')->nullable();

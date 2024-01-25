@@ -24,6 +24,8 @@ use App\Http\Controllers\Apps\TreatsDealController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('upload',[AudioController::class,'formVideo']);
+Route::POST('upload-video',[AudioController::class,'postVedio'])->name('post.vedio');
 
 Route::middleware(['auth', 'verified'])->group(function () {
 

@@ -412,19 +412,12 @@ class HomeController extends BaseController
                 return response()->json(['error' => $validator->errors()], 400);
             }
 
-            $video = Video::withCount(['comments', 'likes', 'views'])
-                ->findOrFail($request->input('video_id'));
+            $video = Video::with(['comments.user:id,name,profile', 'likes', 'views'])->withCount(['comments', 'likes', 'views'])
+                ->find($request->input('video_id'));
+
 
             $response=[
-                'video' => [
-                    'id' => $video->id,
-                    'title' => $video->title,
-                    'description' => $video->description,
-                    'file_path' => $video->file_path,
-                    'comments' => $video->comments->toArray(),
-                    'likes' => $video->likes->toArray(),
-                    'views' => $video->views->toArray(),
-                ],
+                'video' => $video,
                 'total_comments' => $video->comments_count,
                 'total_likes' => $video->likes_count,
                 'total_views' => $video->views_count,

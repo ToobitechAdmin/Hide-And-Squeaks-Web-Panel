@@ -38,6 +38,7 @@ Route::middleware('auth:api')->group(function () {
     // Video Routes
     Route::get('/videos', [VideoController::class, 'index']);
     Route::post('/videos-upload', [VideoController::class, 'store']);
+    Route::post('/video-del', [VideoController::class, 'destory']);
     Route::post('/multiple-upload', [VideoController::class, 'storeMultiple']);
 
     Route::controller(HomeController::class)->group(function () {
