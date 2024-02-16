@@ -15,38 +15,13 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\JsonResponse;
 use Pion\Laravel\ChunkUpload\Exceptions\UploadFailedException;
-use App\Http\Controllers\API\BaseController as BaseController;
-use Validator;
-use Str;
 use Auth;
-use Symfony\Component\HttpFoundation\Response; // Make sure to import Response
-use Pawlox\VideoThumbnail\VideoThumbnail;
-use FFMpeg;
-use FFMpeg\Coordinate\TimeCode;
-class VideoController extends BaseController
+class VideoController extends Controller
 {
     public function index()
     {
-        try {
-            $videos = Video::with(['likes', 'comments'])->get();
-
-            $data = $videos->map(function ($video) {
-                return [
-                    'id' => $video->id,
-                    'title' => $video->title,
-                    'file_path' => $video->file_path,
-                    'thumbnail_path' => $video->thumbnail_path,
-                    'video_type' => $video->video_type,
-                    'total_comments' => $video->comments->count(),
-                    'total_likes' => $video->likes->count(),
-                    'created_at' => $video->created_at,
-                ];
-            });
-
-            return response()->json(['data' => $data,'status' => true]);
-        } catch (\Exception $e) {
-            return response()->json(['message' => "Something went wrong ",'status' => "false"], 500);
-        }
+        $videos = Video::all();
+        return response()->json($videos);
     }
   /**
      * Handles the file upload for multiple videos
@@ -116,37 +91,15 @@ class VideoController extends BaseController
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-
-            'title' => 'required',
-            'description' => 'required',
-            'video_type' => 'required',
-            'thumbnail' => 'required',
-
-        ]);
-        if($validator->fails()){
-            return $this->sendError($validator->errors()->first());
-
-        }
         try {
-            $thumbnail_file = null;
             // Check if the file is present in the request
-            if (!$request->hasFile('file_path')) {
+            if (!$request->hasFile('file')) {
                 throw new UploadMissingFileException('No file uploaded.');
-            }
-            // if (!$request->hasFile('thumbnail')) {
-            //     return $this->sendError("The Thumbnail field is required.");
-            // }
-            if($request->hasFile('thumbnail'))
-            {
-                $img = Str::random(20).$request->file('thumbnail')->getClientOriginalName();
-                $thumbnail_file = 'documents/thumbnail/'.$img;
-                $request->thumbnail->move(public_path("documents/thumbnail"), $img);
             }
              $user_id = auth()->id();
 
             // Create the file receiver
-            $receiver = new FileReceiver("file_path", $request, HandlerFactory::classFromRequest($request));
+            $receiver = new FileReceiver("file", $request, HandlerFactory::classFromRequest($request));
 
             // Check if the upload is successful
             if (!$receiver->isUploaded()) {
@@ -159,7 +112,7 @@ class VideoController extends BaseController
             // Check if the upload has finished
             if ($save->isFinished()) {
                 // Save the file to storage and database
-                $response = $this->saveFile($save->getFile(), $request->input('title'), $request->input('description'),$request->input('video_type'),$user_id,$thumbnail_file);
+                $response = $this->saveFile($save->getFile(), $request->input('title'), $request->input('description'), $user_id);
 
                 return $response;
             }
@@ -191,40 +144,41 @@ class VideoController extends BaseController
      * @param string $description
      * @return JsonResponse
      */
-    protected function saveFile(UploadedFile $file, $title, $description,$video_type,$user_id,$thumbnail_file)
+    protected function saveFile(UploadedFile $file, $title, $description,$user_id)
     {
         try {
             // Validate file size, mime type, or any other relevant validation
 
             $fileName = $this->createFilename($file);
+
+            // Group files by mime type
+            $mime = str_replace('/', '-', $file->getMimeType());
+
+            // Group files by the date (week)
+            $dateFolder = date("Y-m-W");
+
             // Build the file path
             $filePath = "upload/";
             $finalPath = storage_path("app/public/" . $filePath);
 
             // Move the file
             $file->move($finalPath, $fileName);
-            $videoPath = $filePath . $fileName;
-            // $thumbnailPath = 'storage/'.$this->generateThumbnail($videoPath);
-            $thumbnailPath = 'default.png';
 
             // Save video information to the database
             $video = Video::create([
-                'title' => $title??null,
-                'description' => $description??null,
-                'file_path' => 'storage/'.$filePath . $fileName??null,
-                'user_id'=>$user_id??null,
-                "video_type"=>$video_type,
-                "thumbnail_path"=>$thumbnail_file??null
+                'title' => $title,
+                'description' => $description,
+                'file_path' => $filePath . $fileName,
+                'user_id'=>$user_id,
             ]);
 
             $response = [
                 'message' => 'Video uploaded successfully',
-                'data' => [
-                    'video_path' => $video->file_path??null,
-                    'title' => $video->title??null,
-                    'description' => $video->description??null,
-                    "video_type"=>$video_type??null,
-                    "thumbnail_path"=>$video->thumbnail_path??null,
+                'video' => [
+                    'video_path' => $video->file_path,
+                    'title' => $video->title,
+                    'description' => $video->description,
+                    'user_id'=>$video->user_id,
                 ],
             ];
 
@@ -236,19 +190,6 @@ class VideoController extends BaseController
         }
     }
 
-    private function generateThumbnail($videoPath)
-    {
-
-        $thumbnailPath = 'thumbnails/' . pathinfo($videoPath, PATHINFO_FILENAME) . '.jpg';
-        FFMpeg::fromDisk('public')
-            ->open($videoPath)
-            ->getFrameFromSeconds(1) // Adjust the time (in seconds) to capture the frame
-            ->export()
-            ->toDisk('public')
-            ->save($thumbnailPath);
-
-        return $thumbnailPath;
-    }
     /**
      * Create unique filename for uploaded file
      *
@@ -264,31 +205,5 @@ class VideoController extends BaseController
         $filename .= "_" . md5(time()) . "." . $extension;
 
         return $filename;
-    }
-
-    public function destory(Request $request){
-        $validator = Validator::make($request->all(), [
-
-            'video_id' => 'required',
-
-        ]);
-        if($validator->fails()){
-            return $this->sendError($validator->errors()->first());
-
-        }
-        try {
-            $id = auth()->id();
-            $data = Video::where(['id'=>$request->video_id,'user_id'=>$id])->first();
-            if(!isset($data)){
-                return $this->sendError("Video Not Found");
-            }
-
-            $data->delete();
-            return $this->sendResponse([], 'Video Delete Successfully');
-        } catch (\Exception $e) {
-
-            return response()->json(['error' => 'Something went wrong'], 500);
-        }
-        return $request->all();
     }
 }
