@@ -43,31 +43,35 @@ Route::middleware('auth:api')->group(function () {
 
     Route::controller(HomeController::class)->group(function () {
       //Profile Route
-    Route::get('/profile', 'getProfile');
-    Route::post('/profile-upload', 'profilePost');
+        Route::get('/profile', 'getProfile');
+        Route::post('/profile-upload', 'profilePost');
 
-    //Comments Routes
-    Route::get('/comment', 'getComment');
-    Route::post('/upload-comment', 'commentPost');
+        //Comments Routes
+        Route::get('/comment', 'getComment');
+        Route::post('/upload-comment', 'commentPost');
 
-    //Like Routes
-    Route::get('/like', 'totalNumberOfLikes');
-    Route::post('/upload-like', 'likePost');
+        //Like Routes
+        Route::get('/like', 'totalNumberOfLikes');
+        Route::post('/upload-like', 'likePost');
 
-    Route::get('/audio', 'getAudio');
-    Route::get('/my-library', 'myLibrary');
-    Route::POST('/add-my-library', 'addMyLibrary');
-    Route::POST('/add-paid-sound-my-library', 'addPaidSoundMyLibrary');
+        Route::get('/audio', 'getAudio');
+        Route::get('/my-library', 'myLibrary');
+        Route::POST('/add-my-library', 'addMyLibrary');
+        Route::POST('/add-paid-sound-my-library', 'addPaidSoundMyLibrary');
 
-    Route::POST('/del-from-library', 'delFromLibrary');
-    Route::POST('play-paid-sound','playPaidSound');
+        Route::POST('/del-from-library', 'delFromLibrary');
+        Route::POST('play-paid-sound','playPaidSound');
 
-    Route::get('/paragraph', 'getLegal');
-    Route::post('/view-video', 'videoById');
-    Route::post('/add-view', 'addView');
-    Route::get('/list-treats', 'treatsList');
-    Route::get('/my-balance', 'myBalance');
+        Route::get('/paragraph', 'getLegal');
+        Route::post('/view-video', 'videoById');
+        Route::post('/add-view', 'addView');
+        Route::get('/list-treats', 'treatsList');
+        Route::get('/my-balance', 'myBalance');
+
+        Route::post('/purchase-treats', 'purchaseTreats');
+
     });
+
 
 
 

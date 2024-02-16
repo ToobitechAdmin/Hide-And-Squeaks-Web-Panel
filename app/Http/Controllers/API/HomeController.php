@@ -14,6 +14,7 @@ use App\Models\Ensurance;
 use App\Models\UserSound;
 use App\Models\UserPaidSoundCount;
 use App\Models\Treat;
+use App\Models\PaymentDetails;
 
 use Validator;
 use Str;
@@ -274,14 +275,14 @@ class HomeController extends BaseController
     }
     public function getLegal()
     {
-    try
-    {
-        //code...
-        $para = Ensurance::all();
-        return $this->sendResponse($para);
-    }
-    catch (\Throwable $th) {
-        return $this->sendError('Something went wrong');
+        try
+        {
+            //code...
+            $para = Ensurance::all();
+            return $this->sendResponse($para);
+        }
+        catch (\Throwable $th) {
+            return $this->sendError('Something went wrong');
         }
     }
 
@@ -490,5 +491,31 @@ class HomeController extends BaseController
             return $this->sendError('Something went wrong');
         }
 
+    }
+
+    public function purchaseTreats(Request $request){
+        try {
+            $validator = Validator::make($request->all(), [
+                'treats_id' => 'required',
+                'price' => 'required',
+                'transaction_id' => 'required',
+            ]);
+
+            if($validator->fails()){
+                return $this->sendError($validator->errors()->first());
+            }
+            $user = auth()->user();
+            $user_id = $user->id;
+            $data['treats_id'] = $request->treats_id;
+            $data['price'] = $request->price;
+            $data['transaction_id'] = $request->transaction_id;
+            $data['user_id'] = $user_id;
+            $user->deposit($data['price']);
+            PaymentDetails::create($data);
+            return $this->sendResponse([],'Payment Successfully');
+
+        } catch (\Throwable $th) {
+                return $this->sendError('Something went wrong');
+            }
     }
 }

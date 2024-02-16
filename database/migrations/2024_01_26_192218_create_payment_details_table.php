@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ensurances', function (Blueprint $table) {
+        Schema::create('payment_details', function (Blueprint $table) {
             $table->id();
-            $table->longText('paragraph')->nullable();
+            $table->integer('treats_id')->nullable();
+            $table->integer('user_id')->nullable();
+            $table->double('price')->nullable();
+            $table->string('transaction_id', 100)->nullable();
             $table->timestamps();
         });
     }
@@ -23,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ensurances');
+        Schema::dropIfExists('payment_details');
     }
 };
