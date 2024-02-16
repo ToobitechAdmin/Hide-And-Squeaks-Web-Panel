@@ -17,6 +17,8 @@ return new class extends Migration
             $table->integer('user_id')->nullable();
             $table->string('description')->nullable();
             $table->string('file_path')->nullable();
+            $table->string('thumbnail_path')->nullable()->nullable()->default('default.png');
+            $table->enum('video_type', ['public', 'private'])->nullable()->default('public');
             $table->timestamps();
         });
     }

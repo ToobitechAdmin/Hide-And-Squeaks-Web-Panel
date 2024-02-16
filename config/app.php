@@ -181,6 +181,7 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+        Pawlox\VideoThumbnail\VideoThumbnailServiceProvider::class,
 
         /*
          * Package Service Providers...
@@ -210,6 +211,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
+        'VideoThumbnail' => Pawlox\VideoThumbnail\Facade\VideoThumbnail::class,
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
 

@@ -11,7 +11,7 @@
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
                 <li class="breadcrumb-item"><a href="{{ route('ensurance.index') }}">Ensurance Policy</a></li>
-                <li class="breadcrumb-item active" aria-current="page"Edit Ensurance Policy</li>
+                <li class="breadcrumb-item active" aria-current="page">Edit Ensurance Policy</li>
             </ol>
         </nav>
     @endsection
@@ -47,7 +47,7 @@
                             <!--end::Label-->
 
                             <!--begin::Input-->
-                            <textarea name="paragraph" id="editor" class="editor form-control form-control-solid mb-3 mb-lg-0" placeholder="Enter Paragraph" value="{!! $ensurance->paragraph !!}"></textarea>
+                            <textarea name="paragraph" id="editor" class="editor form-control form-control-solid mb-3 mb-lg-0" placeholder="Enter Paragraph" >{{ $ensurance->paragraph }}</textarea>
                             <!--end::Input-->
                         </div>
 

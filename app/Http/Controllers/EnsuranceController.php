@@ -44,7 +44,7 @@ class EnsuranceController extends Controller
 }
 public function edit($id)
 {
-    $ensurance = Ensurance::findOrFail($id);
+    $ensurance = Ensurance::find($id);
     return view('ensurance.edit', compact('ensurance'));
 }
 public function update(Request $request, $id)
@@ -54,7 +54,7 @@ public function update(Request $request, $id)
     //     'audio_file' => 'nullable|mimes:mp3,wav', // Allow audio file to be optional during update
     // ]);
 
-    $ensurance = Ensurance::findOrFail($id);
+    $ensurance = Ensurance::find($id);
 
     $ensurance->paragraph = $request->input('paragraph');
 
